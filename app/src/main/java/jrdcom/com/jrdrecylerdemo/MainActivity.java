@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchUpListener
     }
 
     private void initData(){
-        //添加虚拟数据
+        //添加虚拟数据,这里仅是测试数据
         JrdTitleItem titleItem = new JrdTitleItem();
         titleItem.itemTitle = "test";
         mData.add(titleItem);
