@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00ddcc"
+    >
+    <ImageView
+        android:id="@+id/type2_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="30dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/lufy"/>
+    <TextView
+        android:id="@+id/type2_text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="top"
+        android:text="This is title"/>
+    <TextView
+        android:id="@+id/type2_text2"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:text="This is bottom"/>
+
+</FrameLayout>
