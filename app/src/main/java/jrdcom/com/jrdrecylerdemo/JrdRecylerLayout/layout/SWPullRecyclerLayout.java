@@ -36,6 +36,7 @@ public class SWPullRecyclerLayout extends LinearLayout implements NestedScrollin
     private boolean isfling = false;
     private int headerHeight = 0;
     private int footerHeight = 0;
+    private boolean mScrollBackAuto = true;
 
     public SWPullRecyclerLayout(Context context) {
         super(context);
@@ -183,6 +184,23 @@ public class SWPullRecyclerLayout extends LinearLayout implements NestedScrollin
         }
     }
 
+    /*
+    * 设置是否自动scroll back
+    * */
+    public void setScrollBackAuto(boolean backAuto){
+        mScrollBackAuto = backAuto;
+    }
+
+    public boolean getScrollBackAuto(){
+        return mScrollBackAuto;
+    }
+    /*
+    * 手动ScrollBack
+    * */
+    public void ScrollBackManual(){
+        this.setScrollTo(this.getTotal(), 0);
+    }
+
     public void onStopNestedScroll(View child) {
         helper.onStopNestedScroll(child);
         if (onTouchUpListener != null) {
@@ -193,7 +211,9 @@ public class SWPullRecyclerLayout extends LinearLayout implements NestedScrollin
                     this.setIsScrollRefresh(true);
                     onTouchUpListener.OnRefreshing();
                     this.setIsScrollRefresh(false);
-                    this.setScrollTo(this.getTotal(), 0);
+                    if(mScrollBackAuto == true){
+                        this.setScrollTo(this.getTotal(), 0);
+                    }
                 }
             } else if (-this.getTotal() >= footerHeight) {
                 this.setScrollTo(this.getTotal(), -footerHeight);
@@ -201,7 +221,9 @@ public class SWPullRecyclerLayout extends LinearLayout implements NestedScrollin
                     this.setIsScrollLoad(true);
                     onTouchUpListener.OnLoading();
                     this.setIsScrollLoad(false);
-                    this.setScrollTo(this.getTotal(), 0);
+                    if(mScrollBackAuto == true){
+                        this.setScrollTo(this.getTotal(), 0);
+                    }
                 }
             } else {
                 this.setScrollTo(0, 0);

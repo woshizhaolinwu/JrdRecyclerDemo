@@ -1,13 +1,14 @@
 package jrdcom.com.jrdrecylerdemo;
 
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -20,7 +21,11 @@ import jrdcom.com.jrdrecylerdemo.JrdRecylerLayout.adapter.JrdRecyclerAdapter;
 import jrdcom.com.jrdrecylerdemo.JrdRecylerLayout.interfaces.OnTouchUpListener;
 import jrdcom.com.jrdrecylerdemo.JrdRecylerLayout.layout.SWPullRecyclerLayout;
 
-public class MainActivity extends AppCompatActivity implements OnTouchUpListener {
+/**
+ * Created by longcheng on 2017/4/26.
+ */
+
+public class JrdMainActivity extends AppCompatActivity implements OnTouchUpListener {
     private SWPullRecyclerLayout recyclerLayout;
     List<Object> mData = new ArrayList<>();
     @Override
@@ -73,12 +78,23 @@ public class MainActivity extends AppCompatActivity implements OnTouchUpListener
     }
 
     private static final int MSG_SLEEP = 1;
+    private static final int MSG_CHILD_TO_MAIN = 2;
+    private static final int MSG_MAIN_TO_CHILD= 3;
+    private Handler mThreadHandler;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case MSG_SLEEP:
-                    recyclerLayout.ScrollBackManual();
+                    if(false == recyclerLayout.getScrollBackAuto()) {
+                        recyclerLayout.ScrollBackManual();
+                    }
+                    //使用子线程发送
+                    mThreadHandler.sendEmptyMessage(MSG_MAIN_TO_CHILD);
+                    break;
+                case MSG_CHILD_TO_MAIN:
+                    Log.d("TestThread", "get message from child");
+                    mThreadHandler.sendEmptyMessage(MSG_MAIN_TO_CHILD);
                     break;
             }
             //super.handleMessage(msg);
@@ -93,7 +109,27 @@ public class MainActivity extends AppCompatActivity implements OnTouchUpListener
         new Thread(new Runnable() {
             @Override
             public void run() {
+                //Loop循环
                 Looper.prepare();
+                //接收从主线层发送过来的消息
+                mThreadHandler = new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        switch (msg.what){
+                            case MSG_MAIN_TO_CHILD:
+                                Log.d("TestThread", "get message from main");
+                                /*休息2S后发送消息给主线程*/
+                                try{
+                                    Thread.sleep(2000);
+                                }catch (InterruptedException e){
+                                    e.printStackTrace();
+                                }
+                                mHandler.sendEmptyMessage(MSG_CHILD_TO_MAIN);
+                                break;
+                        }
+
+                    }
+                };
                 try{
                     Thread.sleep(3000);
                 }catch (InterruptedException e){
@@ -105,9 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnTouchUpListener
                 Looper.loop();
             }
         }).start();
-        if(false == recyclerLayout.getScrollBackAuto()){
-            recyclerLayout.ScrollBackManual();
-        }
+
 
     }
 }
